@@ -35,13 +35,16 @@ class Inventory:
         return f"Item '{name}' not found."
 
     def apply_discount(self, name, discount_percentage):
-        """Apply a discount to an item"""
-        for item in self.items:
-            if item["name"] == name:
+    """ Apply a discount to an item"""
+    for item in self.items:
+        if item["name"] == name:
+            if item["discount"] == 0:  # Only apply if no discount applied
                 item["discount"] = discount_percentage
-                item["price"] *= (1 - discount_percentage / 100)  # Apply discount to price
+                item["price"] *= (1 - discount_percentage / 100)
                 return f"Discount of {discount_percentage}% applied to '{name}'."
-        return f"Item '{name}' not found."
+            else:
+                return f"Item '{name}' already has a discount applied."
+    return f"Item '{name}' not found."
 
     def delete_item(self, name):
         """Delete an item from the inventory"""
