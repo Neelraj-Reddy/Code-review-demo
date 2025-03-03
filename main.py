@@ -9,8 +9,7 @@ class Inventory:
         item = {
             "name": name,
             "quantity": quantity,
-            "price": price,
-            "discount": 0  # Added discount field
+            "price": price
         }
         self.items.append(item)
         return f"Item '{name}' added successfully."
@@ -21,30 +20,25 @@ class Inventory:
             return "No items in inventory."
         return json.dumps(self.items, indent=4)
 
-    def update_item(self, name, quantity=None, price=None, discount=None):
-        """Update an item's quantity, price, or discount"""
+    def update_item(self, name, quantity=None, price=None):
+        """Update an item's quantity or price"""
         for item in self.items:
             if item["name"] == name:
                 if quantity:
                     item["quantity"] = quantity
                 if price:
                     item["price"] = price
-                if discount is not None:
-                    item["discount"] = discount
                 return f"Item '{name}' updated."
         return f"Item '{name}' not found."
-
-    def apply_discount(self, name, discount_percentage):
-    """ Apply a discount to an item"""
-    for item in self.items:
-        if item["name"] == name:
-            if item["discount"] == 0:  # Only apply if no discount applied
-                item["discount"] = discount_percentage
-                item["price"] *= (1 - discount_percentage / 100)
-                return f"Discount of {discount_percentage}% applied to '{name}'."
-            else:
-                return f"Item '{name}' already has a discount applied."
-    return f"Item '{name}' not found."
+    
+    def filter_items(self, price_limit=None, quantity_limit=None):
+        """Filter items by price and quantity"""
+        filtered_items = self.items
+        if price_limit:
+            filtered_items = [item for item in filtered_items if item["price"] <= price_limit]
+        if quantity_limit:
+            filtered_items = [item for item in filtered_items if item["quantity"] >= quantity_limit]
+        return json.dumps(filtered_items, indent=4)
 
     def delete_item(self, name):
         """Delete an item from the inventory"""
@@ -58,6 +52,7 @@ if _name_ == "_main_":
     inventory = Inventory()
     inventory.add_item("Laptop", 10, 1200)
     inventory.add_item("Phone", 30, 800)
+    inventory.add_item("Headphones", 50, 100)
+    inventory.add_item("Tablet", 5, 250)
     print(inventory.view_items())
-    print(inventory.apply_discount("Laptop", 10))  # Applying 10% discount
-    print(inventory.view_items())
+    print(inventory.filter_items(price_limit=1000, quantity_limit=10))  # Filtering items
