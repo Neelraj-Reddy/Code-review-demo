@@ -1,7 +1,7 @@
 import json
 
 class Inventory:
-    def _init_(self):
+    def __init__(self):
         self.items = []
     
     def add_item(self, name, quantity, price):
@@ -21,7 +21,7 @@ class Inventory:
         return json.dumps(self.items, indent=4)
 
     def update_item(self, name, quantity=None, price=None):
-        """Update an item's quantity or price"""
+        """Update an item's quantity or price in inventory"""
         for item in self.items:
             if item["name"] == name:
                 if quantity:
@@ -30,15 +30,6 @@ class Inventory:
                     item["price"] = price
                 return f"Item '{name}' updated."
         return f"Item '{name}' not found."
-    
-    def filter_items(self, price_limit=None, quantity_limit=None):
-        """Filter items by price and quantity"""
-        filtered_items = self.items
-        if price_limit:
-            filtered_items = [item for item in filtered_items if item["price"] <= price_limit]
-        if quantity_limit:
-            filtered_items = [item for item in filtered_items if item["quantity"] >= quantity_limit]
-        return json.dumps(filtered_items, indent=4)
 
     def delete_item(self, name):
         """Delete an item from the inventory"""
@@ -48,11 +39,8 @@ class Inventory:
                 return f"Item '{name}' deleted successfully."
         return f"Item '{name}' not found."
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     inventory = Inventory()
     inventory.add_item("Laptop", 10, 1200)
     inventory.add_item("Phone", 30, 800)
-    inventory.add_item("Headphones", 50, 100)
-    inventory.add_item("Tablet", 5, 250)
     print(inventory.view_items())
-    print(inventory.filter_items(price_limit=1000, quantity_limit=10))  # Filtering items
