@@ -1,7 +1,7 @@
 import json
 
 class Inventory:
-    def __init__(self):
+    def _init_(self):
         self.items = []
     
     def add_item(self, name, quantity, price):
@@ -9,7 +9,8 @@ class Inventory:
         item = {
             "name": name,
             "quantity": quantity,
-            "price": price
+            "price": price,
+            "discount": 0  # Added discount field
         }
         self.items.append(item)
         return f"Item '{name}' added successfully."
@@ -20,16 +21,30 @@ class Inventory:
             return "No items in inventory."
         return json.dumps(self.items, indent=4)
 
-    def update_item(self, name, quantity=None, price=None):
-        """Update an item's quantity or price in inventory"""
+    def update_item(self, name, quantity=None, price=None, discount=None):
+        """Update an item's quantity, price, or discount"""
         for item in self.items:
             if item["name"] == name:
                 if quantity:
                     item["quantity"] = quantity
                 if price:
                     item["price"] = price
+                if discount is not None:
+                    item["discount"] = discount
                 return f"Item '{name}' updated."
         return f"Item '{name}' not found."
+
+    def apply_discount(self, name, discount_percentage):
+    """ Apply a discount to an item"""
+    for item in self.items:
+        if item["name"] == name:
+            if item["discount"] == 0:  # Only apply if no discount applied
+                item["discount"] = discount_percentage
+                item["price"] *= (1 - discount_percentage / 100)
+                return f"Discount of {discount_percentage}% applied to '{name}'."
+            else:
+                return f"Item '{name}' already has a discount applied."
+    return f"Item '{name}' not found."
 
     def delete_item(self, name):
         """Delete an item from the inventory"""
@@ -39,8 +54,10 @@ class Inventory:
                 return f"Item '{name}' deleted successfully."
         return f"Item '{name}' not found."
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     inventory = Inventory()
     inventory.add_item("Laptop", 10, 1200)
     inventory.add_item("Phone", 30, 800)
+    print(inventory.view_items())
+    print(inventory.apply_discount("Laptop", 10))  # Applying 10% discount
     print(inventory.view_items())
